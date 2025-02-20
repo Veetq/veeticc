@@ -298,6 +298,25 @@
                 audio.play();
             }
         });
+
+        const titleText = "veeti.cc ";
+        let titlePosition = titleText.length;
+        let isAnimating = true;
+
+        function animateTitle() {
+            if (isAnimating) {
+                document.title = titleText.substring(titlePosition) + titleText.substring(0, titlePosition);
+                titlePosition--;
+                if (titlePosition < 0) {
+                    isAnimating = false;
+                    setTimeout(() => {
+                        titlePosition = titleText.length;
+                        isAnimating = true;
+                    }, 1000); 
+                }
+            }
+        }
+        setInterval(animateTitle, 200);
     </script>
 
 </body>
