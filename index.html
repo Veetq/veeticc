@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>veeti.cc</title>
     <style>
         * {
             margin: 0;
@@ -80,6 +80,7 @@
         audio {
             position: absolute;
             top: -1000px;
+            opacity: 1;
         }
 
         .trail {
@@ -100,6 +101,43 @@
             100% {
                 transform: scale(0);
                 opacity: 0;
+            }
+        }
+
+        #nowPlaying {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+            display: none;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(100%);
+            animation: slideUp 1s forwards;
+            animation-delay: 2s;
+        }
+
+        #nowPlaying .music-symbol {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+
+        #nowPlaying .songInfo {
+            color: gray;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        @keyframes slideUp {
+            0% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
             }
         }
     </style>
@@ -124,20 +162,53 @@
         Your browser does not support the audio tag.
     </audio>
 
+    <div id="nowPlaying">
+        <span class="music-symbol">♫</span> Now Playing:
+        <div class="songInfo"></div>
+    </div>
+
     <script>
+        let currentSong = {
+            title: '',
+            artist: ''
+        };
+
+        let musicPlayed = false;
+        let isMuted = false;
+
         function startSite() {
+            if (musicPlayed) return;
+
             document.getElementById("initialText").style.display = "none";
+
             document.querySelector("h1").style.display = "block";
             document.querySelectorAll("p").forEach(p => p.style.display = "block");
 
+            document.body.style.cursor = "default";
+
             const audio = document.getElementById("backgroundAudio");
 
-            const sounds = ["sound.mp3", "sound2.mp3", "sound3.mp3"];
+            audio.volume = 0.3;
+
+            const sounds = [
+                { file: "sound1.mp3", artist: "Syncsv", title: "Stay the Same" },
+                { file: "sound2.mp3", artist: "Known Hated", title: "Cyan" },
+                { file: "sound3.mp3", artist: "Known Hated", title: "Love" },
+                { file: "sound4.mp3", artist: "heroinsick", title: "casually" }
+            ];
+
             const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
-                       
-            document.getElementById("audioSource").src = randomSound;
-            audio.load();  
-            audio.play();  
+
+            currentSong = randomSound;
+            document.getElementById("audioSource").src = currentSong.file;
+            document.querySelector("#nowPlaying .songInfo").textContent = `${currentSong.artist} - ${currentSong.title}`;
+
+            document.getElementById("nowPlaying").style.display = "block";
+
+            audio.load();
+            audio.play();
+
+            musicPlayed = true;
         }
 
         document.addEventListener("mousemove", (e) => {
@@ -153,23 +224,29 @@
             }, 500);
         });
 
-      
-        let titleText = "veeti.cc - ";
-        let count = 0;
-        let titleInterval;
+        document.getElementById("nowPlaying").addEventListener("click", function () {
+            const audio = document.getElementById("backgroundAudio");
 
-        function animateTitle() {
-            titleInterval = setInterval(() => {
-                document.title = titleText.substring(count) + titleText.substring(0, count);
-                count++;
-                if (count > titleText.length) {
-                    count = 0;
-                }
-            }, 150);
-        }
+            if (isMuted) {
+                audio.volume = 0.3;
+                document.querySelector("#nowPlaying .songInfo").style.color = "gray";
+            } else {
+                audio.volume = 0;
+                document.querySelector("#nowPlaying .songInfo").style.color = "red";
+            }
 
-       
-        animateTitle();
+            isMuted = !isMuted;
+        });
+
+        document.addEventListener('visibilitychange', function () {
+            const audio = document.getElementById("backgroundAudio");
+
+            if (document.hidden) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+        });
     </script>
 
 </body>
