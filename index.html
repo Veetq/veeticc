@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>veeti.cc</title>
+    <title></title>
     <style>
         * {
             margin: 0;
@@ -26,20 +26,60 @@
             position: relative;
         }
 
+        #initialText {
+            font-size: 24px;
+            color: gray;
+            font-weight: bold;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
         h1 {
             font-size: 72px;
             font-weight: bold;
             margin-bottom: 10px;
+            display: none;
+            opacity: 0;
+            transform: translateY(-100%);
+            animation: slideDown 1s forwards;
         }
 
         p {
             font-size: 20px;
             color: gray;
+            display: none;
+            opacity: 0;
+            transform: translateY(-100%);
+            animation: slideDown 1s forwards;
+            animation-delay: 1s;
+        }
+
+        @keyframes slideDown {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        a {
+            color: gray;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
 
         audio {
             position: absolute;
-            top: -1000px; /* Hide the audio player */
+            top: -1000px;
         }
 
         .trail {
@@ -64,39 +104,72 @@
         }
     </style>
 </head>
-<body onclick="playAudio()">
+<body onclick="startSite()">
 
-    <!-- Text displayed in the center -->
+    <div id="initialText">Click me to enter</div>
+
     <h1>veeti.cc</h1>
-    <p>Coming Soon</p>
+    <p><a href="https://www.tiktok.com/@veeti2" target="_blank">/tiktok</a></p>
+    <p><a href="https://www.tiktok.com/@veetiqt" target="_blank">/tiktok2</a></p>
+    <p><a href="https://steamcommunity.com/id/notveeti" target="_blank">/steam</a></p>
+    <p><a href="https://www.twitch.tv/veetiqt" target="_blank">/twitch</a></p>
+    <p><a href="https://www.youtube.com/@veetik" target="_blank">/youtube</a></p>
+    <p><a href="https://kick.com/veetimus" target="_blank">/kick</a></p>
+    <p><a href="https://github.com/Veetq" target="_blank">/github</a></p>
+    <p><a href="https://discord.com/users/341464542725013515" target="_blank">/discord</a></p>
+    <p><a href="https://e-z.bio/veeti" target="_blank">/bio2</a></p>
 
-    <!-- Background audio (hidden initially) -->
     <audio id="backgroundAudio" loop>
-        <source src="sound.mp3" type="audio/mp3">
+        <source id="audioSource" type="audio/mp3">
         Your browser does not support the audio tag.
     </audio>
 
     <script>
-        function playAudio() {
+        function startSite() {
+            document.getElementById("initialText").style.display = "none";
+            document.querySelector("h1").style.display = "block";
+            document.querySelectorAll("p").forEach(p => p.style.display = "block");
+
             const audio = document.getElementById("backgroundAudio");
-            audio.play(); // Play audio when the user clicks anywhere on the screen
+
+            const sounds = ["sound.mp3", "sound2.mp3", "sound3.mp3"];
+            const randomSound = sounds[Math.floor(Math.random() * sounds.length)];
+                       
+            document.getElementById("audioSource").src = randomSound;
+            audio.load();  
+            audio.play();  
         }
 
-        // Mouse trail effect
         document.addEventListener("mousemove", (e) => {
             const trail = document.createElement("div");
             trail.classList.add("trail");
             document.body.appendChild(trail);
 
-            // Position the trail at the mouse location
-            trail.style.left = `${e.pageX - 6}px`;  // Subtract to center the circle on the mouse
-            trail.style.top = `${e.pageY - 6}px`;   // Subtract to center the circle on the mouse
+            trail.style.left = `${e.pageX - 6}px`;
+            trail.style.top = `${e.pageY - 6}px`;
 
-            // Remove the trail after animation completes
             setTimeout(() => {
                 trail.remove();
-            }, 500); // Match the duration of the animation
+            }, 500);
         });
+
+      
+        let titleText = "veeti.cc - ";
+        let count = 0;
+        let titleInterval;
+
+        function animateTitle() {
+            titleInterval = setInterval(() => {
+                document.title = titleText.substring(count) + titleText.substring(0, count);
+                count++;
+                if (count > titleText.length) {
+                    count = 0;
+                }
+            }, 150);
+        }
+
+       
+        animateTitle();
     </script>
 
 </body>
