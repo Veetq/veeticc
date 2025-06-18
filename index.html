@@ -9,6 +9,7 @@
     <meta property="og:url" content="https://veeti.cc/"> 
     <meta property="og:type" content="website">
     <meta content="#0a0a0f" data-react-helmet="true" name="theme-color" />
+    <link rel="icon" type="image/x-icon" href="icon.ico">
     <title>veeti.cc</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -539,6 +540,12 @@
             border-color: rgba(255, 255, 255, 0.2);
         }
 
+        #nowPlaying.paused {
+            background: rgba(255, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            border-color: rgba(255, 0, 0, 0.3);
+        }
+
         #nowPlaying .music-symbol {
             font-size: 20px;
             margin-right: 10px;
@@ -565,6 +572,7 @@
         @media screen and (max-width: 768px) {
             body {
                 cursor: auto;
+                background-attachment: scroll;
             }
             
             .cursor, .cursor-trail {
@@ -606,6 +614,10 @@
         }
 
         @media screen and (max-width: 480px) {
+            body {
+                background-attachment: scroll;
+            }
+
             .container {
                 max-width: 280px;
             }
@@ -666,15 +678,15 @@
         <h1>veeti.cc</h1>
         
         <div class="links-container">
-            <div class="link-item"><a href="https://www.tiktok.com/@veeti2" target="_blank">/tiktok</a></div>
-            <div class="link-item"><a href="https://www.tiktok.com/@veetiqt" target="_blank">/tiktok2</a></div>
-            <div class="link-item"><a href="https://steamcommunity.com/id/notveeti" target="_blank">/steam</a></div>
-            <div class="link-item"><a href="https://www.twitch.tv/veetiqt" target="_blank">/twitch</a></div>
-            <div class="link-item"><a href="https://www.youtube.com/@veetik" target="_blank">/youtube</a></div>
-            <div class="link-item"><a href="https://kick.com/veetimus" target="_blank">/kick</a></div>
-            <div class="link-item"><a href="https://github.com/Veetq" target="_blank">/github</a></div>
-            <div class="link-item"><a href="https://discord.com/users/341464542725013515" target="_blank">/discord</a></div>
-            <div class="link-item"><a href="https://e-z.bio/veeti" target="_blank">/bio2</a></div>
+            <div class="link-item"><a href="https://www.tiktok.com/@veeti2" target="_blank">tiktok</a></div>
+            <div class="link-item"><a href="https://www.tiktok.com/@veetiqt" target="_blank">tiktok2</a></div>
+            <div class="link-item"><a href="https://steamcommunity.com/id/notveeti" target="_blank">steam</a></div>
+            <div class="link-item"><a href="https://www.twitch.tv/veetiqt" target="_blank">twitch</a></div>
+            <div class="link-item"><a href="https://www.youtube.com/@veetik" target="_blank">youtube</a></div>
+            <div class="link-item"><a href="https://kick.com/veetimus" target="_blank">kick</a></div>
+            <div class="link-item"><a href="https://github.com/Veetq" target="_blank">github</a></div>
+            <div class="link-item"><a href="https://discord.com/users/341464542725013515" target="_blank">discord</a></div>
+            <div class="link-item"><a href="https://e-z.bio/veeti" target="_blank">bio2</a></div>
         </div>
     </div>
 
@@ -695,7 +707,7 @@
         };
 
         let musicPlayed = false;
-        let isMuted = false;
+        let isPaused = false;
 
         const cursor = document.querySelector('.cursor');
         const trails = [];
@@ -876,19 +888,20 @@
             e.stopPropagation();
             
             const audio = document.getElementById("backgroundAudio");
-            const songInfo = document.querySelector("#nowPlaying .songInfo").textContent;
+            const songInfoElement = document.querySelector("#nowPlaying .songInfo");
+            const nowPlayingElement = document.getElementById("nowPlaying");
 
-            if (isMuted) {
-                audio.volume = 0.3;
-                songInfo.style.color = "var(--text-secondary)";
-                this.style.opacity = "1";
+            if (isPaused) {
+                audio.play();
+                songInfoElement.style.color = "var(--text-secondary)";
+                nowPlayingElement.classList.remove('paused');
+                isPaused = false;
             } else {
-                audio.volume = 0;
-                songInfo.style.color = "var(--accent-pink)";
-                this.style.opacity = "0.7";
+                audio.pause();
+                songInfoElement.style.color = "var(--accent-pink)";
+                nowPlayingElement.classList.add('paused');
+                isPaused = true;
             }
-
-            isMuted = !isMuted;
         });
 
         document.addEventListener('visibilitychange', function () {
@@ -896,7 +909,7 @@
 
             if (document.hidden) {
                 audio.pause();
-            } else if (musicPlayed) {
+            } else if (musicPlayed && !isPaused) {
                 audio.play().catch(e => console.log("Audio play prevented"));
             }
         });
@@ -919,5 +932,6 @@
         
         setInterval(animateTitle, 300);
     </script>
+    <script async data-id="101478629" src="//static.getclicky.com/js"></script>
 </body>
 </html>
