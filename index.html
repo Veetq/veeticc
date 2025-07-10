@@ -14,16 +14,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap');
+        * {
+            cursor: none !important;
+        }
         body { 
             font-family: 'JetBrains Mono', monospace; 
-            cursor: none;
+            cursor: none !important;
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
         }
         @media (max-width: 768px) {
-            body { cursor: auto; }
+            * { cursor: auto !important; }
+            body { cursor: auto !important; }
             .custom-cursor { display: none; }
         }
         .custom-cursor {
@@ -97,7 +101,7 @@
     <div class="absolute inset-0 grid-bg opacity-30"></div>
     <div class="absolute inset-0 bg-gradient-to-br from-black/70 via-gray-900/50 to-black/70"></div>
 
-    <div id="enterScreen" class="relative z-10 min-h-screen flex items-center justify-center px-4 cursor-pointer touch-manipulation">
+    <div id="enterScreen" class="relative z-10 min-h-screen flex items-center justify-center px-4 touch-manipulation">
         <div class="text-center">
             <p class="text-lg md:text-xl lg:text-2xl text-gray-300 font-light tracking-widest glow-text">Click to enter...</p>
         </div>
