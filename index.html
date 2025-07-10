@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:title" content="veeti.cc">
     <meta property="og:description" content="veeti.cc">
     <meta property="og:image" content="https://raw.githubusercontent.com/Veetq/veeticc/refs/heads/main/4f39ec4671f8d66b408b2490442a6c80.jpg">
@@ -94,8 +95,9 @@
 <body class="min-h-screen relative overflow-hidden bg-black">
     <div class="custom-cursor" id="cursor"></div>
     
-    <audio id="backgroundAudio" loop muted>
+    <audio id="backgroundAudio" loop preload="auto">
         <source src="/song.mp3" type="audio/mpeg">
+        <source src="/song.mp3" type="audio/mp3">
     </audio>
 
     <div class="absolute inset-0 grid-bg opacity-30"></div>
@@ -201,14 +203,35 @@
             if (!hasEntered) {
                 hasEntered = true;
                 
-                audio.muted = false;
-                audio.play().catch(() => {
-                    console.log('Audio autoplay failed');
-                });
+                console.log('Attempting to play audio...');
                 
-                isMuted = false;
-                muteIcon.style.display = 'none';
-                unmuteIcon.style.display = 'block';
+                audio.muted = false;
+                audio.volume = 0.7;
+                
+                const playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('Audio started playing successfully');
+                        isMuted = false;
+                        muteIcon.style.display = 'none';
+                        unmuteIcon.style.display = 'block';
+                    }).catch(error => {
+                        console.log('Audio play failed:', error);
+                        console.log('Trying to load and play again...');
+                        audio.load();
+                        setTimeout(() => {
+                            audio.play().then(() => {
+                                console.log('Audio started on retry');
+                                isMuted = false;
+                                muteIcon.style.display = 'none';
+                                unmuteIcon.style.display = 'block';
+                            }).catch(retryError => {
+                                console.log('Audio retry failed:', retryError);
+                            });
+                        }, 100);
+                    });
+                }
                 
                 enterScreen.style.opacity = '0';
                 enterScreen.style.transform = 'scale(0.95)';
@@ -236,14 +259,18 @@
         muteButton.addEventListener('click', function(e) {
             e.stopPropagation();
             isMuted = !isMuted;
-            audio.muted = isMuted;
             
             if (isMuted) {
+                audio.pause();
                 muteIcon.style.display = 'block';
                 unmuteIcon.style.display = 'none';
             } else {
-                muteIcon.style.display = 'none';
-                unmuteIcon.style.display = 'block';
+                audio.play().then(() => {
+                    muteIcon.style.display = 'none';
+                    unmuteIcon.style.display = 'block';
+                }).catch(error => {
+                    console.log('Mute button play failed:', error);
+                });
             }
         });
 
@@ -251,8 +278,16 @@
             e.stopPropagation();
         });
 
+        audio.addEventListener('canplaythrough', function() {
+            console.log('Audio can play through');
+        });
+
+        audio.addEventListener('error', function(e) {
+            console.log('Audio error:', e);
+        });
+
         audio.addEventListener('loadstart', function() {
-            audio.muted = true;
+            console.log('Audio load started');
         });
     </script>
 </body>
